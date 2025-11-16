@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  products  Product[]
+  credentials MarketplaceCredential[]
+  listings  Listing[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  clientId    String
+  sku         String   @unique
+  title       String
+  description String
+  price       Float
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  variations  ProductVariation[]
+  listings    Listing[]
+  client      Client   @relation(fields: [clientId], references: [id])
+}
+
+model ProductVariation {
+  id        String   @id @default(uuid())
+  productId String
+  sku       String
+  color     String
+  size      String
+  stock     Int
+  price     Float
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model MarketplaceCredential {
+  id             String   @id @default(uuid())
+  clientId       String
+  marketplace    MarketplaceType
+  accessToken    String
+  refreshToken   String?
+  tokenExpiresAt DateTime?
+  client         Client   @relation(fields: [clientId], references: [id])
+}
+
+model Listing {
+  id                    String   @id @default(uuid())
+  productId             String
+  clientId              String
+  marketplace           String
+  marketplaceListingId  String?
+  status                String   @default("PENDING")
+  lastError             String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  product               Product  @relation(fields: [productId], references: [id])
+  client                Client   @relation(fields: [clientId], references: [id])
+}
+
+enum MarketplaceType {
+  MERCADO_LIVRE
+  SHOPEE
+  AMAZON
+  MAGALU
+}
