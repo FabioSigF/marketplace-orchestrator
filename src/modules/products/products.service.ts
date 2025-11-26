@@ -8,7 +8,6 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
-import { UpdateVariationDto } from './dto/update-variation.dto';
 
 @Injectable()
 export class ProductsService {
@@ -112,7 +111,24 @@ export class ProductsService {
     });
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+
+    //Apagar variações
+    await this.prisma.productVariation.deleteMany({
+      where: { productId: id },
+    });
+
+    await this.prisma.product.delete({
+      where: { id },
+    });
+
+    return { message: 'Product and variations deleted successfully', id };
   }
 }
