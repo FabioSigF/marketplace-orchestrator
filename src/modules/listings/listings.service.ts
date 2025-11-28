@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import bull from 'bull';
 import { UpdateListingDto } from './dto/update-listing.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ListingsService {
   constructor(
     @InjectQueue('publish-product')
     private publishQueue: bull.Queue,
+    private readonly prisma: PrismaService,
   ) {}
 
   async publish(productId: string, clientId: string) {
@@ -24,6 +26,26 @@ export class ListingsService {
     );
 
     return { message: 'Produto enviado para fila de publicação.' };
+  }
+
+  async upsertListing(data: {
+    productId: string;
+    clientId: string;
+    externalListingId: string;
+    permalink: string;
+    marketplace: string;
+    status: string;
+  }) {
+    return this.prisma.listing.upsert({
+      where: {
+        productId_marketplace: {
+          productId: data.productId,
+          marketplace: data.marketplace,
+        },
+      },
+      create: data,
+      update: data,
+    });
   }
 
   findAll() {
