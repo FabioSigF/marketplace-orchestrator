@@ -8,6 +8,7 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class ProductsService {
@@ -42,8 +43,36 @@ export class ProductsService {
     });
   }
 
-  async findAll() {
-    return this.prisma.product.findMany({ include: { variations: true } });
+  async findAll(paginationDto: PaginationDto) {
+    const page = Number(paginationDto.page) || 1;
+    const limit = Number(paginationDto.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      this.prisma.product.findMany({
+        skip: offset,
+        take: limit,
+        include: {
+          variations: true,
+          images: true, // caso você tenha criado ProductImage
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+
+      this.prisma.product.count(),
+    ]);
+
+    return {
+      data: items,
+      meta: {
+        total,
+        page,
+        limit,
+        lastPage: Math.ceil(total / limit),
+        hasNextPage: page < Math.ceil(total / limit),
+        hasPrevPage: page > 1,
+      },
+    };
   }
 
   findOne(id: string) {
