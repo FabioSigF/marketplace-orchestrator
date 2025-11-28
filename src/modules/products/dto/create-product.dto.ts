@@ -1,3 +1,4 @@
+import { CreateProductImageDto } from './create-product-image.dto';
 import { CreateVariationDto } from './create-variation.dto';
 
 export class CreateProductDto {
@@ -7,5 +8,6 @@ export class CreateProductDto {
   description: string;
   price: number;
   available?: boolean = true;
-  variations: CreateVariationDto[];
+  variations?: CreateVariationDto[];
+  images: CreateProductImageDto[];
 }

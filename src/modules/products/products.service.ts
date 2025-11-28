@@ -22,8 +22,14 @@ export class ProductsService {
         description: data.description,
         price: data.price,
         available: data.available,
+        images: {
+          create: data.images.map((img) => ({
+            url: img.url,
+            alt: img.alt,
+          })),
+        },
         variations: {
-          create: data.variations.map((v) => ({
+          create: data.variations?.map((v) => ({
             sku: v.sku,
             color: v.color,
             size: v.size,
@@ -75,7 +81,15 @@ export class ProductsService {
       updateData.description = data.description;
     if (data.price !== undefined) updateData.price = data.price;
     if (data.available !== undefined) updateData.available = data.available;
-
+    if (data.images !== undefined) {
+      updateData.images = {
+        deleteMany: {}, // Apagar todas as imagens existentes
+        create: data.images.map((img) => ({
+          url: img.url,
+          alt: img.alt,
+        })), // Adicionar as novas imagens
+      };
+    }
     // Tratar variações
     if (data.variations) {
       updateData.variations = {
@@ -122,6 +136,11 @@ export class ProductsService {
 
     //Apagar variações
     await this.prisma.productVariation.deleteMany({
+      where: { productId: id },
+    });
+
+    //Apagar imagens
+    await this.prisma.productImage.deleteMany({
       where: { productId: id },
     });
 
