@@ -6,8 +6,8 @@ export class ClientCredentialsService {
   constructor(private prisma: PrismaService) {}
 
   async getMarketplaceCredentials(clientId: string) {
-    const credentials = await this.prisma.marketplaceCredentials.findUnique({
-      where: { clientId },
+    const credentials = await this.prisma.marketplaceCredential.findUnique({
+      where: { id: clientId },
     });
 
     if (!credentials) {

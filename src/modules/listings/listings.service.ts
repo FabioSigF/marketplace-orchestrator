@@ -28,6 +28,7 @@ export class ListingsService {
     return { message: 'Produto enviado para fila de publicação.' };
   }
 
+  //Garante que você tenha apenas um registro de publicação (Listing) por produto em cada marketplace
   async upsertListing(data: {
     productId: string;
     clientId: string;
@@ -38,7 +39,8 @@ export class ListingsService {
   }) {
     return this.prisma.listing.upsert({
       where: {
-        productId_marketplace: {
+        clientId_productId_marketplace: {
+          clientId: data.clientId,
           productId: data.productId,
           marketplace: data.marketplace,
         },

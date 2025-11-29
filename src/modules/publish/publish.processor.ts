@@ -38,6 +38,10 @@ export class PublishProcessor {
     const credentials =
       await this.credentialsService.getMarketplaceCredentials(clientId);
 
+    if (!credentials) {
+      throw new Error(`Credentials for client ${clientId} not found`);
+    }
+
     // 3 — Publicar no Mercado Livre
     const publishResult = await this.marketplace.publishToMercadoLivre(
       product,

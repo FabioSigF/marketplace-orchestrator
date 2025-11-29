@@ -1,11 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePublishDto } from './dto/create-publish.dto';
 import { UpdatePublishDto } from './dto/update-publish.dto';
+import { InjectQueue } from '@nestjs/bull';
+import bull from 'bull';
+import { PublishJobDto } from './dto/publish-job.dto';
 
 @Injectable()
 export class PublishService {
-  create(createPublishDto: CreatePublishDto) {
-    return 'This action adds a new publish';
+  constructor(
+    @InjectQueue('publish-product')
+    private readonly publishQueue: bull.Queue,
+  ) {}
+
+  async publishProduct(data: PublishJobDto) {
+    await this.publishQueue.add(data, {
+      attempts: 5,
+      backoff: 5000,
+      removeOnComplete: true,
+      removeOnFail: false,
+    });
+
+    return {
+      message: 'Publish job successfully queued',
+      data,
+    };
   }
 
   findAll() {

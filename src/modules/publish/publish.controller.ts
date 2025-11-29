@@ -1,15 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PublishService } from './publish.service';
-import { CreatePublishDto } from './dto/create-publish.dto';
 import { UpdatePublishDto } from './dto/update-publish.dto';
+import { PublishJobDto } from './dto/publish-job.dto';
 
 @Controller('publish')
 export class PublishController {
   constructor(private readonly publishService: PublishService) {}
 
   @Post()
-  create(@Body() createPublishDto: CreatePublishDto) {
-    return this.publishService.create(createPublishDto);
+  async queuePublish(@Body() dto: PublishJobDto) {
+    return this.publishService.publishProduct(dto);
   }
 
   @Get()

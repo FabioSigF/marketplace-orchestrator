@@ -1,4 +1,4 @@
-export interface PublishJobDto {
+export class PublishJobDto {
   productId: string;
   clientId: string;
 }
