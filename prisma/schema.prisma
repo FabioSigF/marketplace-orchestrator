@@ -80,6 +80,8 @@ model Listing {
   updatedAt             DateTime @updatedAt
   product               Product  @relation(fields: [productId], references: [id])
   client                Client   @relation(fields: [clientId], references: [id])
+
+  @@unique([clientId, productId, marketplace])
 }
 
 enum MarketplaceType {
