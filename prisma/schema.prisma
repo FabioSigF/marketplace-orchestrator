@@ -16,6 +16,7 @@ datasource db {
 model Client {
   id        String   @id @default(uuid())
   name      String
+  email     String   @unique
   createdAt DateTime @default(now())
   products  Product[]
   credentials MarketplaceCredential[]
@@ -74,6 +75,7 @@ model Listing {
   clientId              String
   marketplace           String
   marketplaceListingId  String?
+  permalink             String?
   status                String   @default("PENDING")
   lastError             String?
   createdAt             DateTime @default(now())
@@ -81,7 +83,7 @@ model Listing {
   product               Product  @relation(fields: [productId], references: [id])
   client                Client   @relation(fields: [clientId], references: [id])
 
-  @@unique([clientId, productId, marketplace])
+  @@unique([clientId, productId, marketplace], name: "clientId_productId_marketplace")
 }
 
 enum MarketplaceType {

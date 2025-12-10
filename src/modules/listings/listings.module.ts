@@ -7,5 +7,6 @@ import { QueueModule } from '../queue/queue.module';
   imports: [QueueModule],
   controllers: [ListingsController],
   providers: [ListingsService],
+  exports: [ListingsService],
 })
 export class ListingsModule {}

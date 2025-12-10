@@ -1,9 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateMarketplaceDto } from './dto/create-marketplace.dto';
 import { UpdateMarketplaceDto } from './dto/update-marketplace.dto';
 
 @Injectable()
 export class MarketplacesService {
+  private readonly logger = new Logger(MarketplacesService.name);
+
+  async publishToMercadoLivre(product: any, credentials: any) {
+    this.logger.log(`Simulando publicação no Mercado Livre...`);
+
+    // Aqui futuramente entra o axios para API real
+    await new Promise((r) => setTimeout(r, 1500));
+
+    return {
+      listingId: 'MLB-' + product.id,
+      permalink: 'https://www.mercadolivre.com.br/item/' + product.id,
+      status: 'active',
+    };
+  }
+
   create(createMarketplaceDto: CreateMarketplaceDto) {
     return 'This action adds a new marketplace';
   }

@@ -12,7 +12,7 @@ export class PublishService {
   ) {}
 
   async publishProduct(data: PublishJobDto) {
-    await this.publishQueue.add(data, {
+    await this.publishQueue.add('publish', data, {
       attempts: 5,
       backoff: 5000,
       removeOnComplete: true,

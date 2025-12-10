@@ -32,7 +32,7 @@ export class ListingsService {
   async upsertListing(data: {
     productId: string;
     clientId: string;
-    externalListingId: string;
+    marketplaceListingId: string;
     permalink: string;
     marketplace: string;
     status: string;

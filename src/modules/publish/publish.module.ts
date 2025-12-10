@@ -3,16 +3,23 @@ import { PublishService } from './publish.service';
 import { PublishController } from './publish.controller';
 import { BullModule } from '@nestjs/bull';
 import { PublishProcessor } from './publish.processor';
-import { PrismaService } from '../prisma/prisma.service';
+import { ClientsModule } from '../clients/clients.module';
+import { MarketplacesModule } from '../marketplaces/marketplaces.module';
+import { ListingsModule } from '../listings/listings.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'publish-product',
     }),
+    ClientsModule,
+    MarketplacesModule,
+    ListingsModule,
+    PrismaModule,
   ],
   controllers: [PublishController],
-  providers: [PublishService, PublishProcessor, PrismaService],
+  providers: [PublishService, PublishProcessor],
   exports: [PublishService],
 })
 export class PublishModule {}
