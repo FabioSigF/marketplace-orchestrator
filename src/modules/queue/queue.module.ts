@@ -1,10 +1,13 @@
-import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'publish-product', // nome da fila
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+      },
     }),
   ],
   exports: [BullModule],

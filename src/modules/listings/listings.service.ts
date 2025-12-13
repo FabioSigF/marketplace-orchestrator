@@ -1,32 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectQueue } from '@nestjs/bull';
-import bull from 'bull';
 import { UpdateListingDto } from './dto/update-listing.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ListingsService {
-  constructor(
-    @InjectQueue('publish-product')
-    private publishQueue: bull.Queue,
-    private readonly prisma: PrismaService,
-  ) {}
-
-  async publish(productId: string, clientId: string) {
-    await this.publishQueue.add(
-      {
-        productId,
-        clientId,
-      },
-      {
-        attempts: 5, // retry automático
-        backoff: 3000, // 3s entre tentativas
-        removeOnComplete: true,
-      },
-    );
-
-    return { message: 'Produto enviado para fila de publicação.' };
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   //Garante que você tenha apenas um registro de publicação (Listing) por produto em cada marketplace
   async upsertListing(data: {
