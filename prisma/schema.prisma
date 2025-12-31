@@ -62,11 +62,17 @@ model ProductVariation {
 model MarketplaceCredential {
   id             String   @id @default(uuid())
   clientId       String
+  marketplaceUserId String // ID do usuário no marketplace
   marketplace    MarketplaceType
   accessToken    String
   refreshToken   String?
   tokenExpiresAt DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt @default(now())
   client         Client   @relation(fields: [clientId], references: [id])
+
+  @@unique([clientId, marketplace], name: "clientId_plataform")
+  @@unique([marketplaceUserId, marketplace], name: "clientId_marketplace")
 }
 
 model Listing {

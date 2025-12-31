@@ -1,10 +1,30 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateMarketplaceDto } from './dto/create-marketplace.dto';
 import { UpdateMarketplaceDto } from './dto/update-marketplace.dto';
+import { MercadoLivreAdapter } from './adapters/mercado-livre.adapter';
 
 @Injectable()
 export class MarketplacesService {
+  constructor(private readonly mercadoLivre: MercadoLivreAdapter) {}
+
   private readonly logger = new Logger(MarketplacesService.name);
+
+  handleMercadoLivreCallback(code: string, clientId_plataform: string) {
+    return this.mercadoLivre.handleOAuthCallback(code, clientId_plataform);
+  }
+
+  getMercadoLivreAuthorizeUrl(clientId_plataform: string) {
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: process.env.ML_CLIENT_ID!,
+      redirect_uri: process.env.ML_REDIRECT_URI!,
+      state: clientId_plataform,
+    });
+
+    return {
+      url: `https://auth.mercadolivre.com.br/authorization?${params.toString()}`,
+    };
+  }
 
   async publishToMercadoLivre(product: any, credentials: any) {
     this.logger.log(`Simulando publicação no Mercado Livre...`);

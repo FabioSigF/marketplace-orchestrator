@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { MarketplacesService } from './marketplaces.service';
 import { CreateMarketplaceDto } from './dto/create-marketplace.dto';
 import { UpdateMarketplaceDto } from './dto/update-marketplace.dto';
@@ -23,12 +32,30 @@ export class MarketplacesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMarketplaceDto: UpdateMarketplaceDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateMarketplaceDto: UpdateMarketplaceDto,
+  ) {
     return this.marketplacesService.update(+id, updateMarketplaceDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.marketplacesService.remove(+id);
+  }
+
+  // Mercado Livre OAuth Endpoints
+
+  @Get('mercadolivre/authorize-url')
+  getAuthorizeUrl(@Query('clientId') clientId: string) {
+    return this.marketplacesService.getMercadoLivreAuthorizeUrl(clientId);
+  }
+
+  @Get('mercadolivre/callback')
+  async handleCallback(
+    @Query('code') code: string,
+    @Query('state') clientId: string,
+  ) {
+    return this.marketplacesService.handleMercadoLivreCallback(code, clientId);
   }
 }

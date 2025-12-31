@@ -1,5 +1,4 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { CreateMarketplaceCredentialDto } from './dto/create-marketplace-credential.dto';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 
@@ -10,10 +9,5 @@ export class ClientsController {
   @Post()
   createClient(@Body() dto: CreateClientDto) {
     return this.clientsService.createClient(dto);
-  }
-
-  @Post('marketplace-credentials')
-  createCredential(@Body() dto: CreateMarketplaceCredentialDto) {
-    return this.clientsService.createMarketplaceCredential(dto);
   }
 }
